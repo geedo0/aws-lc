@@ -131,8 +131,8 @@ static int ccm128_init_state(const struct ccm128_context *ctx,
                              const uint8_t *aad, size_t aad_len,
                              size_t plaintext_len) {
   const block128_f block = ctx->block;
-  const unsigned M = ctx->M;
-  const unsigned L = ctx->L;
+  const uint32_t M = ctx->M;
+  const uint32_t L = ctx->L;
 
   // |L| determines the expected |nonce_len| and the limit for |plaintext_len|.
   if (plaintext_len > CRYPTO_ccm128_max_input(ctx) ||
@@ -147,8 +147,8 @@ static int ccm128_init_state(const struct ccm128_context *ctx,
     state->nonce.c[0] |= 0x40;  // Set AAD Flag
   }
   OPENSSL_memcpy(&state->nonce.c[1], nonce, nonce_len);
-  for (unsigned i = 0; i < L; i++) {
-    state->nonce.c[15 - i] = (uint8_t)(plaintext_len >> (8 * i));
+  for (uint32_t i = 0; i < L; i++) {
+    state->nonce.c[15 - i] = (uint8_t)((uint64_t) plaintext_len >> (8 * i));
   }
 
   (*block)(state->nonce.c, state->cmac.c, key);
