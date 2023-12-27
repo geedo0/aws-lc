@@ -723,7 +723,7 @@ bool UnitTestOptions::FilterMatchesTest(const std::string& test_suite_name,
 // Returns EXCEPTION_EXECUTE_HANDLER if Google Test should handle the
 // given SEH exception, or EXCEPTION_CONTINUE_SEARCH otherwise.
 // This function is useful as an __except condition.
-int UnitTestOptions::GTestShouldProcessSEH(DWORD exception_code) {
+int UnitTestOptions::GTestShouldProcessSEH(DWORD exception_code, LPEXCEPTION_POINTERS p) {
   // Google Test should handle a SEH exception if:
   //   1. the user wants it to, AND
   //   2. this is not a breakpoint exception, AND
@@ -732,6 +732,11 @@ int UnitTestOptions::GTestShouldProcessSEH(DWORD exception_code) {
   //
   // SEH exception code for C++ exceptions.
   // (see http://support.microsoft.com/kb/185294 for more information).
+
+  uint64_t flag = p->ExceptionRecord->ExceptionInformation[0];
+  uint64_t address = p->ExceptionRecord->ExceptionInformation[1];
+  std::cout << "SEH EXCEPTION OCCURED!! flag: " << flag << ", address: " << address << std::endl;
+
   const DWORD kCxxExceptionCode = 0xe06d7363;
 
   bool should_handle = true;
@@ -2589,15 +2594,23 @@ Result HandleSehExceptionsInMethodIfSupported(
   __try {
     return (object->*method)();
   } __except (internal::UnitTestOptions::GTestShouldProcessSEH(  // NOLINT
-      GetExceptionCode())) {
+      GetExceptionCode(), GetExceptionInformation())) {
     // We create the exception message on the heap because VC++ prohibits
     // creation of objects with destructors on stack in functions using __try
     // (see error C2712).
-    std::string* exception_message = FormatSehExceptionMessage(
+    std::string* foo = FormatSehExceptionMessage(
         GetExceptionCode(), location);
+
+    LPEXCEPTION_POINTERS p = GetExceptionInformation();
+    uint64_t flag = p->ExceptionRecord->ExceptionInformation[0];
+    uint64_t address = p->ExceptionRecord->ExceptionInformation[1];
+    std::ostringstream oss;
+    oss << *foo << " flag: " << flag << ", address: " << address;
+    std::string *exception_message = new std::string(oss.str());
     internal::ReportFailureInUnknownLocation(TestPartResult::kFatalFailure,
                                              *exception_message);
     delete exception_message;
+    delete foo;
     return static_cast<Result>(0);
   }
 #else
