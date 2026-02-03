@@ -556,10 +556,14 @@ elseif(FIPS_SHARED)
   # compiler to aggressively store static function pointer addresses in the
   # .data.rel.ro.local section which is discarded by our linker script and
   # results in undefined references when linking libcrypto.
-  if(CMAKE_C_COMPILER_ID STREQUAL "GNU" AND
-     CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "14" AND
-     CMAKE_SYSTEM_NAME STREQUAL "Linux" AND
-     ARCH STREQUAL "x86_64")
+  #
+  # DISABLE_SLP_VECTORIZE can be set to force this mitigation on any GCC
+  # version for performance testing purposes.
+  if((CMAKE_C_COMPILER_ID STREQUAL "GNU" AND
+      CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "14" AND
+      CMAKE_SYSTEM_NAME STREQUAL "Linux" AND
+      ARCH STREQUAL "x86_64") OR
+     DISABLE_SLP_VECTORIZE)
     target_compile_options(bcm_library PRIVATE -fno-tree-slp-vectorize)
   endif()
 
