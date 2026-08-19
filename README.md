@@ -1,25 +1,3 @@
-C++ library and needs a C++ compiler.
-
-Fork AWS-LC on GitHub and run the following commands to build AWS-LC with optimizations
-and debug info, run all tests, and install it:
-```bash
-sudo yum install cmake3 ninja-build clang perl golang
-git clone https://github.com/${YOUR_GITHUB_ACCOUNT_NAME}/aws-lc.git
-mkdir aws-lc-build && cd aws-lc-build
-cmake3 -GNinja \
-    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-    -DCMAKE_INSTALL_PREFIX=../aws-lc-install \
-    ../aws-lc
-ninja-build run_tests && ninja-build install
-cd ../aws-lc-install/
-ls *
-```
-See [Building.md](https://github.com/aws/aws-lc/blob/main/BUILDING.md) for more
-information about required dependencies and build options. If you’re interested in
-getting involved [open an issue](https://github.com/aws/aws-lc/issues/new/choose) to discuss your plan.
-[Contributing.md](https://github.com/aws/aws-lc/blob/main/CONTRIBUTING.md) has
-info for how to specifically make the change and get it reviewed by AWS-LC maintainers.
-If you just want to use AWS-LC, see our [existing documentation](https://aws.github.io/aws-lc/headers.html) in the public header
 files. If you’re moving your application from OpenSSL, see the
 [porting guide](https://github.com/aws/aws-lc/blob/main/PORTING.md)
 for more information.
