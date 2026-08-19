@@ -1,16 +1,3 @@
-# AWS libcrypto (AWS-LC)
-
-AWS-LC is a general-purpose cryptographic library maintained by the AWS Cryptography
-team for AWS and their customers. It іs based on code from the Google BoringSSL project
-and the OpenSSL project.
-
-AWS-LC contains portable C implementations of algorithms needed for TLS and common
-applications. For performance critical algorithms, optimized assembly versions are
-included for x86 and ARM.
-
-## Quickstart for Amazon Linux 2
-
-AWS-LC’s libcrypto is a C library and needs a C compiler. AWS-LC's libssl is a
 C++ library and needs a C++ compiler.
 
 Fork AWS-LC on GitHub and run the following commands to build AWS-LC with optimizations
